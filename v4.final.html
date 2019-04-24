@@ -10,57 +10,7 @@
 <body> 
 
   <table id="controls">
-    <tr>
-      <!-- <td colspan="2">
-        <a href='v1.straight.html'>straight</a> |
-        <a href='v2.curves.html'>curves</a>     |
-        <a href='v3.hills.html'>hills</a>       |
-        <a href='v4.final.html'>final</a>
-      </td> -->
-    </tr>
     <tr><td id="fps" colspan="2" align="right"></td></tr>
-    <!-- <tr>
-      <th><label for="resolution">Resolution :</label></th>
-      <td>
-        <select id="resolution" style="width:100%">
-          <option value='fine'>Fine (1280x960)</option>
-          <option selected value='high'>High (1024x768)</option>
-          <option value='medium'>Medium (640x480)</option>
-          <option value='low'>Low (480x360)</option>
-        </select>
-      </td>
-    </tr> -->
-    <tr>
-      <!-- <th><label for="lanes">Lanes :</label></th> -->
-      <!-- <td>
-        <select id="lanes">
-          <option>1</option>
-          <option>2</option>
-          <option selected>3</option>
-          <option>4</option>
-        </select>
-      </td> -->
-    </tr>
-    <!-- <tr>
-      <th><label for="roadWidth">Road Width (<span id="currentRoadWidth"></span>) :</label></th>
-      <td><input id="roadWidth" type='range' min='500' max='3000' title="integer (500-3000)"></td>
-    </tr> -->
-    <!-- <tr>
-      <th><label for="cameraHeight">CameraHeight (<span id="currentCameraHeight"></span>) :</label></th>
-      <td><input id="cameraHeight" type='range' min='500' max='5000' title="integer (500-5000)"></td>
-    </tr>
-    <tr>
-      <th><label for="drawDistance">Draw Distance (<span id="currentDrawDistance"></span>) :</label></th>
-      <td><input id="drawDistance" type='range' min='100' max='500' title="integer (100-500)"></td>
-    </tr>
-    <tr>
-      <th><label for="fieldOfView">Field of View (<span id="currentFieldOfView"></span>) :</label></th>
-      <td><input id="fieldOfView" type='range' min='80' max='140' title="integer (80-140)"></td>
-    </tr> -->
-    <!-- <tr>
-      <th><label for="fogDensity">Fog Density (<span id="currentFogDensity"></span>) :</label></th>
-      <td><input id="fogDensity" type='range' min='0' max='50' title="integer (0-50)"></td>
-    </tr> -->
   </table>
 
   <div id='instructions'>
@@ -70,8 +20,7 @@
   <div id="racer">
     <div id="hud">
         <span id="speed"            class="hud"><span id="speed_value" class="value">0</span> mph</span>
-        <span id="current_lap_time" class="hud">Time: <span id="current_lap_time_value" class="value">0.0</span></span> 
-        <!-- <span id="last_lap_time"    class="hud">Last Lap: <span id="last_lap_time_value" class="value">0.0</span></span> -->
+        <span id="current_lap_time" class="hud">Time: <span id="current_lap_time_value" class="value">0.0</span></span>
         <span id="fast_lap_time"    class="hud">Fastest Lap: <span id="fast_lap_time_value" class="value">0.0</span></span>
       </div>
   <canvas id="canvas">
@@ -548,32 +497,6 @@
     function resetSprites() {
       var n, i;
 
-      // addSprite(20,  SPRITES.BILLBOARD07, -1);
-      // addSprite(40,  SPRITES.BILLBOARD06, -1);
-      // addSprite(60,  SPRITES.BILLBOARD08, -1);
-      // addSprite(80,  SPRITES.BILLBOARD09, -1);
-      // addSprite(100, SPRITES.BILLBOARD01, -1);
-      // addSprite(120, SPRITES.BILLBOARD02, -1);
-      // addSprite(140, SPRITES.BILLBOARD03, -1);
-      // addSprite(160, SPRITES.BILLBOARD04, -1);
-      // addSprite(180, SPRITES.BILLBOARD05, -1);
-
-      // addSprite(240,                  SPRITES.BILLBOARD07, -1.2);
-      // addSprite(240,                  SPRITES.BILLBOARD06,  1.2);
-      // addSprite(segments.length - 25, SPRITES.BILLBOARD07, -1.2);
-      // addSprite(segments.length - 25, SPRITES.BILLBOARD06,  1.2);
-
-      // for(n = 10 ; n < 200 ; n += 4 + Math.floor(n/100)) {
-      //   addSprite(n, SPRITES.PALM_TREE, 0.5 + Math.random()*0.5);
-      //   addSprite(n, SPRITES.PALM_TREE,   1 + Math.random()*2);
-      // }
-
-      // for(n = 250 ; n < 1000 ; n += 5) {
-       // addSprite(n,     SPRITES.COLUMN, 1.1);
-        //addSprite(n + Util.randomInt(0,5), SPRITES.TREE1, -1 - (Math.random() * 2));
-        //addSprite(n + Util.randomInt(0,5), SPRITES.TREE2, -1 - (Math.random() * 2));
-      // }
-
       for(n = 200 ; n < segments.length ; n += 3) {
         addSprite(n, Util.randomChoice(SPRITES.PLANTS), Util.randomChoice([1,-1]) * (2 + Math.random() * 5));
       }
@@ -669,13 +592,6 @@
       reset({ width: w, height: h })
       Dom.blur(ev);
     });
-
-    // Dom.on('lanes',          'change', function(ev) { Dom.blur(ev); reset({ lanes:         ev.target.options[ev.target.selectedIndex].value }); });
-    // Dom.on('roadWidth',      'change', function(ev) { Dom.blur(ev); reset({ roadWidth:     Util.limit(Util.toInt(ev.target.value), Util.toInt(ev.target.getAttribute('min')), Util.toInt(ev.target.getAttribute('max'))) }); });
-    // Dom.on('cameraHeight',   'change', function(ev) { Dom.blur(ev); reset({ cameraHeight:  Util.limit(Util.toInt(ev.target.value), Util.toInt(ev.target.getAttribute('min')), Util.toInt(ev.target.getAttribute('max'))) }); });
-    // Dom.on('drawDistance',   'change', function(ev) { Dom.blur(ev); reset({ drawDistance:  Util.limit(Util.toInt(ev.target.value), Util.toInt(ev.target.getAttribute('min')), Util.toInt(ev.target.getAttribute('max'))) }); });
-    // Dom.on('fieldOfView',    'change', function(ev) { Dom.blur(ev); reset({ fieldOfView:   Util.limit(Util.toInt(ev.target.value), Util.toInt(ev.target.getAttribute('min')), Util.toInt(ev.target.getAttribute('max'))) }); });
-    // Dom.on('fogDensity',     'change', function(ev) { Dom.blur(ev); reset({ fogDensity:    Util.limit(Util.toInt(ev.target.value), Util.toInt(ev.target.getAttribute('min')), Util.toInt(ev.target.getAttribute('max'))) }); });
 
     function refreshTweakUI() {
       Dom.get('lanes').selectedIndex = lanes-1;
