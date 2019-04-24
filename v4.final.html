@@ -10,17 +10,24 @@
 <body> 
 
   <table id="controls">
+    
     <tr><td id="fps" colspan="2" align="right"></td></tr>
+   
   </table>
 
   <div id='instructions'>
     <p>Use the <b>arrow keys</b> to drive the car.</p>
   </div>
+  
+  <div id='fastest_record'>
+    <span> Fastest time so far: <span id="fastest_time_value" class="value"> 0.0</span> </span>
+  </div>
 
   <div id="racer">
     <div id="hud">
         <span id="speed"            class="hud"><span id="speed_value" class="value">0</span> mph</span>
-        <span id="current_lap_time" class="hud">Time: <span id="current_lap_time_value" class="value">0.0</span></span>
+        <span id="current_lap_time" class="hud">Time: <span id="current_lap_time_value" class="value">0.0</span></span> 
+        <!-- <span id="last_lap_time"    class="hud">Last Lap: <span id="last_lap_time_value" class="value">0.0</span></span> -->
         <span id="fast_lap_time"    class="hud">Fastest Lap: <span id="fast_lap_time_value" class="value">0.0</span></span>
       </div>
   <canvas id="canvas">
@@ -32,7 +39,7 @@
 
   <audio id='music'>
     <source src="music/racer.ogg">
-    <source src="music/racer.mp3">
+    <source src="music/Down.mp3">
   </audio>
   <span id="mute"></span>
 
@@ -93,9 +100,18 @@
       speed:            { value: null, dom: Dom.get('speed_value')            },
       current_lap_time: { value: null, dom: Dom.get('current_lap_time_value') },
       last_lap_time:    { value: null, dom: Dom.get('last_lap_time_value')    },
-      fast_lap_time:    { value: null, dom: Dom.get('fast_lap_time_value')    }
+      fast_lap_time:    { value: null, dom: Dom.get('fast_lap_time_value')    },
+      fastest_time:     { value: null, dom: Dom.get('fastest_time_value')     },
     }
 
+    //=========================================================================
+    // GAME OVER SCREEN
+    //=========================================================================
+
+    function gameover() {
+
+    
+    }
     //=========================================================================
     // UPDATE THE GAME WORLD
     //=========================================================================
@@ -169,16 +185,20 @@
           currentLapTime = 0;
           if (lastLapTime <= Util.toFloat(Dom.storage.fast_lap_time)) {
             Dom.storage.fast_lap_time = lastLapTime;
+            Dom.storage.fastest_time = lastLapTime;
             updateHud('fast_lap_time', formatTime(lastLapTime));
+            updateHud('fastest_time', formatTime(lastLapTime));
             Dom.addClassName('fast_lap_time', 'fastest');
-            Dom.addClassName('last_lap_time', 'fastest');
+            //Dom.addClassName('last_lap_time', 'fastest');
+           // Dom.addClassName('fastest_time', 'fastest');
           }
           else {
             Dom.removeClassName('fast_lap_time', 'fastest');
-            Dom.removeClassName('last_lap_time', 'fastest');
+            //Dom.removeClassName('last_lap_time', 'fastest');
+           // Dom.removeClassName('fastest_time', 'fastest');
           }
-          updateHud('last_lap_time', formatTime(lastLapTime));
-          Dom.show('last_lap_time');
+          //updateHud('last_lap_time', formatTime(lastLapTime));
+          //Dom.show('last_lap_time');
         }
         else {
           currentLapTime += dt;
@@ -497,6 +517,7 @@
     function resetSprites() {
       var n, i;
 
+     
       for(n = 200 ; n < segments.length ; n += 3) {
         addSprite(n, Util.randomChoice(SPRITES.PLANTS), Util.randomChoice([1,-1]) * (2 + Math.random() * 5));
       }
@@ -528,6 +549,16 @@
         segment.cars.push(car);
         cars.push(car);
       }
+      // for (var n = 0 ; n < 1 ; n++) {
+      //   offset = Math.random() * Util.randomChoice([-0.8, 0.8]);
+      //   z      = Math.floor(Math.random() * segments.length) * segmentLength;
+      //   sprite = Util.randomChoice(SPRITES.CARS);
+      //   speed  = 11000;
+      //   car = { offset: offset, z: z, sprite: sprite, speed: speed };
+      //   segment = findSegment(car.z);
+      //   segment.cars.push(car);
+      //   cars.push(car);
+      // }
     }
 
     //=========================================================================
@@ -553,22 +584,23 @@
         reset();
         Dom.storage.fast_lap_time = Dom.storage.fast_lap_time || 180;
         updateHud('fast_lap_time', formatTime(Util.toFloat(Dom.storage.fast_lap_time)));
+        updateHud('fastest_time', formatTime(Util.toFloat(Dom.storage.fast_lap_time)));
       }
     });
 
     function reset(options) {
       options       = options || {};
-      canvas.width  = width  = Util.toInt(options.width,          width);
-      canvas.height = height = Util.toInt(options.height,         height);
-      lanes                  = Util.toInt(options.lanes,          lanes);
-      roadWidth              = Util.toInt(options.roadWidth,      roadWidth);
-      cameraHeight           = Util.toInt(options.cameraHeight,   cameraHeight);
-      drawDistance           = Util.toInt(options.drawDistance,   drawDistance);
-      fogDensity             = Util.toInt(options.fogDensity,     fogDensity);
-      fieldOfView            = Util.toInt(options.fieldOfView,    fieldOfView);
-      segmentLength          = Util.toInt(options.segmentLength,  segmentLength);
-      rumbleLength           = Util.toInt(options.rumbleLength,   rumbleLength);
-      cameraDepth            = 1 / Math.tan((fieldOfView/2) * Math.PI/180);
+      canvas.width  = width;
+      canvas.height = height;
+      lanes         = lanes;               
+      roadWidth     = roadWidth;         
+      cameraHeight  = cameraHeight;        
+      drawDistance  = drawDistance;
+      fogDensity    = fogDensity;
+      fieldOfView   = fieldOfView;
+      segmentLength = segmentLength;
+      rumbleLength  = rumbleLength;
+      cameraDepth   = 1 / Math.tan((fieldOfView/2) * Math.PI/180);        
       playerZ                = (cameraHeight * cameraDepth);
       resolution             = height/480;
       //refreshTweakUI();
@@ -593,13 +625,14 @@
       Dom.blur(ev);
     });
 
+     Dom.on('lanes',          'change', function(ev) { Dom.blur(ev); reset({ lanes:         ev.target.options[ev.target.selectedIndex].value }); });
+     Dom.on('roadWidth',      'change', function(ev) { Dom.blur(ev); reset({ roadWidth:     Util.limit(Util.toInt(ev.target.value), Util.toInt(ev.target.getAttribute('min')), Util.toInt(ev.target.getAttribute('max'))) }); });
+     Dom.on('cameraHeight',   'change', function(ev) { Dom.blur(ev); reset({ cameraHeight:  Util.limit(Util.toInt(ev.target.value), Util.toInt(ev.target.getAttribute('min')), Util.toInt(ev.target.getAttribute('max'))) }); });
+     Dom.on('drawDistance',   'change', function(ev) { Dom.blur(ev); reset({ drawDistance:  Util.limit(Util.toInt(ev.target.value), Util.toInt(ev.target.getAttribute('min')), Util.toInt(ev.target.getAttribute('max'))) }); });
+     Dom.on('fieldOfView',    'change', function(ev) { Dom.blur(ev); reset({ fieldOfView:   Util.limit(Util.toInt(ev.target.value), Util.toInt(ev.target.getAttribute('min')), Util.toInt(ev.target.getAttribute('max'))) }); });
+     Dom.on('fogDensity',     'change', function(ev) { Dom.blur(ev); reset({ fogDensity:    Util.limit(Util.toInt(ev.target.value), Util.toInt(ev.target.getAttribute('min')), Util.toInt(ev.target.getAttribute('max'))) }); });
+
     function refreshTweakUI() {
-      Dom.get('lanes').selectedIndex = lanes-1;
-      Dom.get('currentRoadWidth').innerHTML      = Dom.get('roadWidth').value      = roadWidth;
-      Dom.get('currentCameraHeight').innerHTML   = Dom.get('cameraHeight').value   = cameraHeight;
-      Dom.get('currentDrawDistance').innerHTML   = Dom.get('drawDistance').value   = drawDistance;
-      Dom.get('currentFieldOfView').innerHTML    = Dom.get('fieldOfView').value    = fieldOfView;
-      Dom.get('currentFogDensity').innerHTML     = Dom.get('fogDensity').value     = fogDensity;
     }
 
     //=========================================================================
